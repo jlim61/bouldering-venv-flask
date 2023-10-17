@@ -1,0 +1,23 @@
+users = [
+    {'username':'jlim',
+    'email':'jlim@email.com',
+    'boulders': [{'Location':'Movement Fountain Valley',
+    'grade':'V4',
+    'setter': 'Matteo',
+    'completed': True,
+    'attempts': 2}]},
+    {'username':'hlim',
+    'email':'hlim@email.com',
+    'boulders': [{'Location':'Movement Fountain Valley',
+    'grade':'V4',
+    'setter': 'Matteo',
+    'completed': True,
+    'attempts': 2}]},
+    {'username':'rlim',
+    'email':'rlim@email.com',
+    'boulders': [{'Location':'Movement Fountain Valley',
+    'grade':'V4',
+    'setter': 'Matteo',
+    'completed': True,
+    'attempts': 2}]}
+]
