@@ -1,4 +1,5 @@
 from flask import request
+from uuid import uuid4
 
 from app import app
 from db import users
@@ -13,17 +14,19 @@ def get_users():
 @app.post('/user')
 def create_user():
     user_data = request.get_json()
-    user_data['boulders'] = []
-    users.append(user_data)
+    users[uuid4().hex] = user_data
     return users, 201
 
 # edit a user
-@app.put('/user')
-def update_user():
+@app.put('/user/<user_id>')
+def update_user(user_id):
     user_data = request.get_json()
-    user = list(filter(lambda user: user["username"] == user_data["username"], users))[0]
-    user['username'] = user_data['new username']
-    return user, 200
+    try:
+        user = users[user_id]
+        user['username'] = user_data['username']
+        return user, 200
+    except KeyError:
+        return {'message': 'user not found'}, 400
 
 # delete a user
 @app.delete('/user')
@@ -33,3 +36,6 @@ def delete_user():
         if user['username'] == user_data['username']:
             users.pop(i)
     return {'message': f'{user_data["username"]} deleted'}, 202
+
+
+# 

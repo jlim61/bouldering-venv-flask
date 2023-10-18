@@ -1,25 +1,38 @@
 from flask import request
+from uuid import uuid4
 
 from app import app
-from db import users
+from db import boulders
 
 # get boulder
 @app.get('/boulder')
 def get_boudler():
-    pass
+    return {'boulders': boulders}
 
 # create boulder
 @app.post('/boulder')
 def create_boulder():
-    pass
+    boulder_data = request.get_json()
+    boulders[uuid4().hex] = boulder_data
+    return boulder_data, 201
 
 # edit boulder
-@app.put('/boulder')
-def update_boulder():
-    pass
+@app.put('/boulder/<boulder_id>')
+def update_boulder(boulder_id):
+    boulder_data = request.get_json()
+    try:
+        boulder = boulders[boulder_id]
+        boulder['grade'] = boulder_data['grade']
+        return boulder, 200
+    except KeyError:
+        return {'message': 'Boulder not found'}, 400
 
 # delete boulder
-@app.delete('/boulder')
-def delete_boulder():
-    pass
+@app.delete('/boulder/<boulder_id>')
+def delete_boulder(boulder_id):
+    try:
+        deleted_boulder = boulders.pop(boulder_id)
+        return {'message': f'{deleted_boulder} deleted'}, 202
+    except KeyError:
+        return {'message': 'Boulder not found'}, 400
 
