@@ -16,6 +16,15 @@ def create_boulder():
     boulders[uuid4().hex] = boulder_data
     return boulder_data, 201
 
+# get a single boulder
+@app.get('/boulder/<boulder_id>')
+def get_boulder(boulder_id):
+    try:
+        boulder = boulders[boulder_id]
+        return boulder, 200
+    except KeyError:
+        return {'message': 'boulder not found'}, 400
+
 # edit boulder
 @app.put('/boulder/<boulder_id>')
 def update_boulder(boulder_id):
