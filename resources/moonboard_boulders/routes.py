@@ -3,6 +3,8 @@ from uuid import uuid4
 from flask.views import MethodView
 from flask_smorest import abort
 
+from schemas import MoonBoardBoulderSchema, UpdateMoonBoardBoulderSchema
+
 from . import bp
 from db import moonboard_boulders
 
@@ -14,13 +16,10 @@ class MoonboardBoulderList(MethodView):
         return {'boulders': moonboard_boulders}
 
     # create boulder
-    def post(self):
-        moonboard_boulder_id = request.get_json()
-        for k in ['boulder_name', 'grade', 'setter', 'starting_hold', 'usable_holds', 'finish_hold', 'moonboard_configuration']:
-            if k not in moonboard_boulder_id:
-                abort(400, message='Please include boulder_name, grade, setter, starting_hold, usable_holds, finish_hold, and moonboard_configuration')
-        moonboard_boulders[uuid4().hex] = moonboard_boulder_id
-        return moonboard_boulder_id, 201
+    @bp.arguments(MoonBoardBoulderSchema)
+    def post(self, moonboard_boulder_data):
+        moonboard_boulders[uuid4().hex] = moonboard_boulder_data
+        return moonboard_boulder_data, 201
 
 
 @bp.route('/moonboard_boulder/<moonboard_boulder_id>')
@@ -35,14 +34,16 @@ class MoonboardBoulder(MethodView):
             # return {'message': 'boulder not found'}, 404
 
     # edit boulder
-    def put(self, moonboard_boulder_id):
-        moonboard_boulder_data = request.get_json()
-        try:
-            boulder = moonboard_boulders[moonboard_boulder_id]
-            boulder['grade'] = moonboard_boulder_data['grade']
-            return boulder, 200
-        except KeyError:
-            abort(404, message='Boulder not found')
+    @bp.arguments(UpdateMoonBoardBoulderSchema)
+    def put(self, moonboard_boulder_data, moonboard_boulder_id):
+        if moonboard_boulder_id in moonboard_boulders:
+            moonboard_boulder = moonboard_boulders[moonboard_boulder_id]
+            if moonboard_boulder_data['setter_id'] != moonboard_boulder['setter_id']:
+                abort(400, message="Cannot edit another setter's boulder")
+            for key, value in moonboard_boulder_data.items():
+                if value is not None:
+                    moonboard_boulder[key] = value
+        return moonboard_boulder, 200
 
     # delete boulder
     def delete(self, moonboard_boulder_id):

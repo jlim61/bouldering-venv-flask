@@ -3,6 +3,7 @@ from uuid import uuid4
 from flask.views import MethodView
 from flask_smorest import abort
 
+from schemas import GymBoulderSchema, UpdateGymBoulderSchema
 from . import bp
 from db import gym_boulders
 
@@ -14,13 +15,10 @@ class GymBoulderList(MethodView):
         return {'boulders': gym_boulders}
 
     # create boulder
-    def post(self):
-        gym_boulder_id = request.get_json()
-        for k in ['location', 'grade', 'setter']:
-            if k not in gym_boulder_id:
-                abort(400, message='Please include location, grade, setter')
-        gym_boulders[uuid4().hex] = gym_boulder_id
-        return gym_boulder_id, 201
+    @bp.arguments(GymBoulderSchema)
+    def post(self, gym_boulder_data):
+        gym_boulders[uuid4().hex] = gym_boulder_data
+        return gym_boulder_data, 201
 
 
 @bp.route('/gym_boulder/<gym_boulder_id>')
@@ -35,15 +33,16 @@ class GymBoulder(MethodView):
             # return {'message': 'boulder not found'}, 404
 
     # edit boulder
-    def put(self, gym_boulder_id):
-        gym_boulder_data = request.get_json()
-        try:
-            boulder = gym_boulders[gym_boulder_id]
-            if 'grade' in gym_boulder_data:
-                boulder['grade'] = gym_boulder_data['grade']
-            return boulder, 200
-        except KeyError:
-            abort(404, message='Boulder not found')
+    @bp.arguments(UpdateGymBoulderSchema)
+    def put(self, gym_boulder_data, gym_boulder_id):
+        if gym_boulder_id in gym_boulders:
+            gym_boulder = gym_boulders[gym_boulder_id]
+            if gym_boulder_data['setter_id'] != gym_boulder['setter_id']:
+                abort(400, message="Cannot edit another setter's boulder")
+            for key, value in gym_boulder_data.items():
+                if value is not None:
+                    gym_boulder[key] = value
+        return gym_boulder, 200
 
 
     # delete boulder
