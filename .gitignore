@@ -1,3 +1,4 @@
 .env
 bouldering_venv/
 __pycache__/
+migrations/

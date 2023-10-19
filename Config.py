@@ -1,3 +1,5 @@
+import os
+
 class Config:
     PROPAGATE_EXCEPTIONS = True
     API_TITLE = 'Bouldering Rest API'
@@ -6,3 +8,4 @@ class Config:
     OPENAPI_URL_PREFIX = '/'
     OPENAPI_SWAGGER_UI_PATH = '/'
     OPENAPI_SWAGGER_UI_URL = 'https://cdn.jsdelivr.net/npm/swagger-ui-dist/'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLDATABASE_URL')

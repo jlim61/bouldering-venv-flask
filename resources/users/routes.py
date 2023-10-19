@@ -1,11 +1,13 @@
 from flask import request
-from uuid import uuid4
 from flask.views import MethodView
 from flask_smorest import abort
+from sqlalchemy.exc import IntegrityError
 
-from schemas import UpdateUserSchema, UserSchema
+from schemas import AuthUserSchema, UpdateUserSchema, UserSchema
 
 from . import bp
+from .UserModel import UserModel
+from app import db
 from db import users
 
 
@@ -15,52 +17,52 @@ class UserList(MethodView):
     # get all users
     @bp.response(200, UserSchema(many=True))
     def get(self):
-        return users.values()
+        return UserModel.query.all()
 
 
-    # create a user
+    # create user
     @bp.arguments(UserSchema)
     @bp.response(201, UserSchema)
     def post(self, user_data):
-        users[uuid4().hex] = user_data
-        return user_data
+        user = UserModel()
+        user.from_dict(user_data)
+        try:
+            user.save()
+            return user_data
+        except IntegrityError:
+            abort(400, message='Username or Email already taken')
+
+    # delete a user
+    # @bp.arguments(AuthUserSchema)
+    def delete(self):
+        user_data = request.get_json()
+        user = UserModel.query.filter_by(username=user_data['username']).first()
+        if user and user.username == user_data['username'] and user.check_password(user_data['password']):
+            user.delete()
+            return {'message':f'{user_data["username"]} deleted'}, 202
+        abort(400, message='Username or Password Invalid')
 
 
 @bp.route('/user/<user_id>')
 class User(MethodView):
     # get a single user
+    @bp.response(200, UserSchema)
     def get(self, user_id):
-        try:
-            user = users[user_id]
-            return user, 200
-        except KeyError:
-            abort(404, message='User not found')
+        return UserModel.query.get_or_404(user_id, description='User not found')
 
     # Edit a user
     @bp.arguments(UpdateUserSchema)
+    @bp.response(200, UpdateUserSchema)
     def put(self, user_data, user_id):
-        if user_id in users:
-            user = users[user_id]
-            if 'password' in user_data and user_data['password'] != user['password']:
-                abort(404, message='Incorrect Password')
-            for key, value in user_data.items():
-                if value is not None:
-                    if key == 'password':
-                        if 'new_password' in user_data:
-                            user['password'] = user_data['new_password']
-                        else:
-                            user['password'] = value
-                    else:
-                        user[key] = value
-            return user, 200
+        user = UserModel.query.get_or_404(user_id, description='User not found')
+        if user and user.check_password(user_data['password']):
+            try:
+                user.from_dict(user_data)
+                user.save()
+                return user
+            except IntegrityError:
+                abort(400, message='Username or Email already taken.')
 
-    # delete a user
-    def delete(self, user_id):
-        try:
-            deleted_user = users.pop(user_id)
-            return {'message': f'{deleted_user["username"]} deleted'}, 202
-        except:
-            abort(404, message='User not found')
 
 
 

@@ -1,5 +1,8 @@
 from marshmallow import Schema, fields
 
+
+# ==================================Moonboard Boulders Schemas==================================
+
 class MoonBoardBoulderSchema(Schema):
     boulder_name = fields.Str(required=True)
     grade = fields.Str(required=True)
@@ -18,6 +21,8 @@ class UpdateMoonBoardBoulderSchema(Schema):
     finish_hold = fields.List(fields.Str)
     moonboard_configuration = fields.Str()
 
+# ==================================Gym Boulders Schemas==================================
+
 class GymBoulderSchema(Schema):
     location = fields.Str(required=True)
     grade = fields.Str(required=True)
@@ -27,6 +32,8 @@ class UpdateGymBoulderSchema(Schema):
     location = fields.Str()
     grade = fields.Str()
     setter_id = fields.Str(required=True)
+
+# ==================================User Schemas==================================
 
 class UserSchema(Schema):
     id = fields.Str(dump_only=True)
@@ -44,6 +51,8 @@ class UpdateUserSchema(Schema):
   first_name = fields.Str()
   last_name = fields.Str()
 
+# ==================================Setter Schemas==================================
+
 class SetterSchema(Schema):
     id = fields.Str(dump_only=True)
     username = fields.Str(required=True)
@@ -59,3 +68,10 @@ class UpdateSetterSchema(Schema):
   new_password = fields.Str()
   first_name = fields.Str()
   last_name = fields.Str()
+
+# ==================================Other Schemas==================================
+
+class AuthUserSchema(Schema):
+   username = fields.Str()
+   email = fields.Str()
+   password = fields.Str(required=True, load_only = True)
