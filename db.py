@@ -34,40 +34,40 @@ setters = {
 
 gym_boulders = {
     '1':{
-    'location':'Movement Fountain Valley',
-    'grade':'V4',
-    'setter_id': '1'
+    "location":"Movement Fountain Valley",
+    "grade":"V4",
+    "setter_id": "1"
     },
     '2':{
-    'location':'Movement Fountain Valley',
-    'grade':'V2',
-    'setter_id': '1'
+    "location":"Movement Fountain Valley",
+    "grade":"V2",
+    "setter_id": "1"
     },
     '3':{
-    'location':'Movement Fountain Valley',
-    'grade':'V1',
-    'setter_id': '1'
+    "location":"Movement Fountain Valley",
+    "grade":"V1",
+    "setter_id": "1"
     }
 }
 
 moonboard_boulders = {
     '1':{
-    'boulder_name': 'GTSX',
-    'grade':'7B/V8',
-    'setter_id': '2',
-    'starting_hold': ['F6'],
-    'usable_holds': ['D8','B9', 'C13'],
-    'finish_hold': ['D18'],
-    'moonboard_configuration': 'MoonBoard 2016 (40° MoonBoard)'
+    "boulder_name": "GTSX",
+    "grade":"7B/V8",
+    "setter_id": "2",
+    "starting_hold": ["F6"],
+    "usable_holds": ["D8","B9", "C13"],
+    "finish_hold": ["D18"],
+    "moonboard_configuration": "MoonBoard 2016 (40° MoonBoard)"
     },
     '2':{
-    'boulder_name': 'Tobillos ramoneros',
-    'grade':'6C/V5',
-    'setter_id': '4',
-    'starting_hold': ['A5'],
-    'usable_holds': ['D3','K6', 'B8', 'F10', 'F11', 'I11', 'J13', 'K16'],
-    'finish_hold': ['G18'],
-    'moonboard_configuration': 'MoonBoard 2016 (40° MoonBoard)'
+    "boulder_name": "Tobillos ramoneros",
+    "grade":"6C/V5",
+    "setter_id": "4",
+    "starting_hold": ["A5"],
+    "usable_holds": ["D3","K6", "B8", "F10", "F11", "I11", "J13", "K16"],
+    "finish_hold": ["G18"],
+    "moonboard_configuration": "MoonBoard 2016 (40° MoonBoard)"
     },
     '3':{
     'boulder_name': 'reach',

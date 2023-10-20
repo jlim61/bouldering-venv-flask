@@ -3,7 +3,7 @@ from flask.views import MethodView
 from flask_smorest import abort
 from sqlalchemy.exc import IntegrityError
 
-from schemas import AuthUserSchema, GymBoulderSchema, MoonBoardBoulderSchema, SetterSchema, UpdateSetterSchema
+from schemas import AuthUserSchema, GymBoulderSchema, MoonBoardBoulderSchema, UserSetterSchema, UpdateUserSetterSchema
 
 from . import bp
 from .SetterModel import SetterModel
@@ -15,14 +15,14 @@ from db import setters, gym_boulders, moonboard_boulders
 @bp.route('/setter')
 class SetterList(MethodView):
     # get all setters
-    @bp.response(200, SetterSchema(many=True))
+    @bp.response(200, UserSetterSchema(many=True))
     def get(self):
         return SetterModel.query.all()
 
 
     # create a setter
-    @bp.arguments(SetterSchema)
-    @bp.response(201, SetterSchema)
+    @bp.arguments(UserSetterSchema)
+    @bp.response(201, UserSetterSchema)
     def post(self, setter_data):
         setter = SetterModel()
         setter.from_dict(setter_data)
@@ -46,14 +46,14 @@ class SetterList(MethodView):
 @bp.route('/setter/<setter_id>')
 class Setter(MethodView):
     # get a single setter
-    @bp.response(200, SetterSchema)
+    @bp.response(200, UserSetterSchema)
     def get(self, setter_id):
         return SetterModel.query.get_or_404(setter_id, description='Setter not found')
 
 
     # Edit a setter
-    @bp.arguments(UpdateSetterSchema)
-    @bp.response(200, UpdateSetterSchema)
+    @bp.arguments(UpdateUserSetterSchema)
+    @bp.response(200, UpdateUserSetterSchema)
     def put(self, setter_data, setter_id):
         setter = SetterModel.query.get_or_404(setter_id, description='setter not found')
         if setter and setter.check_password(setter_data['password']):

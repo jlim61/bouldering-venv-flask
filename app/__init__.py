@@ -27,3 +27,5 @@ from resources.moonboard_boulders import routes
 
 from resources.users.UserModel import UserModel
 from resources.setters.SetterModel import SetterModel
+from resources.gym_boulders.GymBoulderModel import GymBoulderModel
+from resources.moonboard_boulders.MoonboardBoulderModel import MoonboardBoulderModel

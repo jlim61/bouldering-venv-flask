@@ -12,6 +12,8 @@ class SetterModel(db.Model):
     password_hash = db.Column(db.String, nullable = False)
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
+    gym_boulders = db.relationship('GymBoulderModel', backref='creator', lazy='dynamic', cascade='all, delete')
+    moonboard_boulders = db.relationship('MoonboardBoulderModel', backref='creator', lazy='dynamic', cascade='all, delete')
 
     def __repr__(self):
         return f'<Setter: {self.username}'
