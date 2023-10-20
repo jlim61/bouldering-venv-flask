@@ -2,6 +2,11 @@ from app import db
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+followers = db.Table('followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('users.id'))    
+)
+
 class UserModel(db.Model):
 
     __tablename__ = 'users'
@@ -12,6 +17,14 @@ class UserModel(db.Model):
     password_hash = db.Column(db.String, nullable = False)
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
+    setter = db.Column(db.Boolean)
+    followed = db.relationship('UserModel',
+        secondary=followers,
+        primaryjoin = followers.c.follower_id == id,
+        secondaryjoin = followers.c.followed_id == id,
+        backref = db.backref('followers', lazy='dynamic'),
+        lazy='dynamic'
+    )
 
     def __repr__(self):
         return f'<User: {self.username}'
@@ -35,3 +48,16 @@ class UserModel(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def is_following(self, user):
+        return self.followed.filter(user.id == followers.c.followed_id).count() > 0
+    
+    def follow_user(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+            self.save()
+
+    def unfollow_user(self,user):
+        if self.is_following(user):
+            self.followed.remove(user)
+            self.save()

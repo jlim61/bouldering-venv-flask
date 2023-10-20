@@ -2,6 +2,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import abort
 from sqlalchemy.exc import IntegrityError
+from resources.users.UserModel import UserModel
 
 from schemas import AuthUserSchema, GymBoulderSchema, MoonBoardBoulderSchema, UserSetterSchema, UpdateUserSetterSchema
 
@@ -24,6 +25,8 @@ class SetterList(MethodView):
     @bp.arguments(UserSetterSchema)
     @bp.response(201, UserSetterSchema)
     def post(self, setter_data):
+        if UserModel.query.filter_by(username=setter_data['username']).first() or UserModel.query.filter_by(email=setter_data['email']).first():
+            abort(400, message='Username or Email already taken')
         setter = SetterModel()
         setter.from_dict(setter_data)
         try:
