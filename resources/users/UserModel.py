@@ -18,6 +18,8 @@ class UserModel(db.Model):
     first_name = db.Column(db.String)
     last_name = db.Column(db.String)
     setter = db.Column(db.Boolean)
+    gym_boulders = db.relationship('GymBoulderModel', backref='creator', lazy='dynamic', cascade='all, delete')
+    moonboard_boulders = db.relationship('MoonboardBoulderModel', backref='creator', lazy='dynamic', cascade='all, delete')
     followed = db.relationship('UserModel',
         secondary=followers,
         primaryjoin = followers.c.follower_id == id,

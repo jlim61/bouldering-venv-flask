@@ -1,10 +1,11 @@
 from flask import request
 from flask.views import MethodView
+from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_smorest import abort
 from sqlalchemy.exc import IntegrityError
-from resources.setters.SetterModel import SetterModel
+from resources.users.UserModel import UserModel
 
-from schemas import AuthUserSchema, UpdateUserSetterSchema, UserSetterSchema
+from schemas import AuthUserSchema, UpdateUserSetterSchema, UserSchemaNested, UserSetterSchema
 
 from . import bp
 from .UserModel import UserModel
@@ -20,43 +21,23 @@ class UserList(MethodView):
     def get(self):
         return UserModel.query.all()
 
-
-    # create user
-    @bp.arguments(UserSetterSchema)
-    @bp.response(201, UserSetterSchema)
-    def post(self, user_data):
-        if SetterModel.query.filter_by(username=user_data['username']).first() or SetterModel.query.filter_by(email=user_data['email']).first():
-            abort(400, message='Username or Email already taken')
-        user = UserModel()
-        user.from_dict(user_data)
-        try:
-            user.save()
-            return user_data
-        except IntegrityError:
-            abort(400, message='Username or Email already taken')
-
     # delete a user
-    # @bp.arguments(AuthUserSetterSchema)
-    def delete(self):
-        user_data = request.get_json()
-        user = UserModel.query.filter_by(username=user_data['username']).first()
+    @jwt_required()
+    @bp.arguments(AuthUserSchema)
+    def delete(self, user_data):
+        user_id = get_jwt_identity()
+        user = UserModel.query.get(user_id)
         if user and user.username == user_data['username'] and user.check_password(user_data['password']):
             user.delete()
             return {'message':f'{user_data["username"]} deleted'}, 202
         abort(400, message='Username or Password Invalid')
 
-
-@bp.route('/user/<user_id>')
-class User(MethodView):
-    # get a single user
-    @bp.response(200, UserSetterSchema)
-    def get(self, user_id):
-        return UserModel.query.get_or_404(user_id, description='User not found')
-
     # Edit a user
+    @jwt_required()
     @bp.arguments(UpdateUserSetterSchema)
     @bp.response(200, UpdateUserSetterSchema)
-    def put(self, user_data, user_id):
+    def put(self, user_data):
+        user_id = get_jwt_identity()
         user = UserModel.query.get_or_404(user_id, description='User not found')
         if user and user.check_password(user_data['password']):
             try:
@@ -66,11 +47,23 @@ class User(MethodView):
             except IntegrityError:
                 abort(400, message='Username or Email already taken.')
 
-@bp.route('/user/follow/<follower_id>/<followed_id>')
+
+@bp.route('/user/<user_id>')
+class User(MethodView):
+    # get a single user
+    @bp.response(200, UserSchemaNested)
+    def get(self, user_id):
+        return UserModel.query.get_or_404(user_id, description='User not found')
+
+
+
+@bp.route('/user/follow/<followed_id>')
 class FollowUser(MethodView):
     # follow a user
+    @jwt_required()
     @bp.response(200, UserSetterSchema(many=True))
-    def post(self, follower_id, followed_id):
+    def post(self, followed_id):
+        follower_id = get_jwt_identity()
         user = UserModel.query.get(follower_id)
         user_to_follow = UserModel.query.get(followed_id)
         if user and user_to_follow:
@@ -79,11 +72,12 @@ class FollowUser(MethodView):
         abort(400, message="Invalid User Info")
 
     # unfollow a user
-    @bp.response(202, UserSetterSchema(many=True))
-    def put(self, follower_id, followed_id):
+    @jwt_required()
+    def put(self, followed_id):
+        follower_id = get_jwt_identity()
         user = UserModel.query.get(follower_id)
         user_to_unfollow = UserModel.query.get(followed_id)
         if user and user_to_unfollow:
             user.unfollow_user(user_to_unfollow)
-            return {'message': f'Unfollowed user: {user_to_unfollow.username}'}
+            return {'message': f'Unfollowed user: {user_to_unfollow.username}'}, 202
         abort(400, message="Invalid User Info")

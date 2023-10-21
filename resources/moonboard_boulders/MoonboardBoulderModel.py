@@ -8,7 +8,7 @@ class MoonboardBoulderModel(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     boulder_name = db.Column(db.String, nullable = False)
     grade = db.Column(db.String, nullable = False)
-    setter_id = db.Column(db.Integer, db.ForeignKey('setters.id'))
+    setter_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     starting_hold = db.Column(JSON, nullable=False)
     usable_holds = db.Column(JSON, nullable=False)
     finish_hold = db.Column(JSON, nullable=False)

@@ -6,7 +6,7 @@ from marshmallow import Schema, fields
 class MoonBoardBoulderSchema(Schema):
     boulder_name = fields.Str(required=True)
     grade = fields.Str(required=True)
-    setter_id = fields.Int(required=True)
+    setter_id = fields.Int(dump_only=True)
     starting_hold = fields.List(fields.Str, required=True)
     usable_holds = fields.List(fields.Str, required=True)
     finish_hold = fields.List(fields.Str, required=True)
@@ -15,7 +15,7 @@ class MoonBoardBoulderSchema(Schema):
 class UpdateMoonBoardBoulderSchema(Schema):
     boulder_name = fields.Str()
     grade = fields.Str()
-    setter_id = fields.Int(required=True)
+    setter_id = fields.Int(dump_only=True)
     starting_hold = fields.List(fields.Str)
     usable_holds = fields.List(fields.Str)
     finish_hold = fields.List(fields.Str)
@@ -31,7 +31,13 @@ class GymBoulderSchema(Schema):
 class UpdateGymBoulderSchema(Schema):
     location = fields.Str()
     grade = fields.Str()
-    setter_id = fields.Int(required=True)
+    setter_id = fields.Int(dump_only=True)
+
+# ==================================All Boulders Schemas==================================
+
+class AllBoulderSchema(Schema):
+    moonboard_boulders = fields.List(fields.Nested(MoonBoardBoulderSchema), dump_only=True)
+    gym_boulders = fields.List(fields.Nested(GymBoulderSchema), dump_only=True)
 
 # ==================================User/Setter Schemas==================================
 
@@ -42,6 +48,13 @@ class UserSetterSchema(Schema):
     password = fields.Str(required=True, load_only = True)
     first_name = fields.Str()
     last_name = fields.Str()
+    setter = fields.Bool()
+
+
+class UserSchemaNested(UserSetterSchema):
+    moonboard_boulders = fields.List(fields.Nested(MoonBoardBoulderSchema), dump_only=True)
+    gym_boulders = fields.List(fields.Nested(GymBoulderSchema), dump_only=True)
+    followed = fields.List(fields.Nested(UserSetterSchema), dump_only=True)
 
 class UpdateUserSetterSchema(Schema):
   username = fields.Str()
@@ -50,10 +63,10 @@ class UpdateUserSetterSchema(Schema):
   new_password = fields.Str()
   first_name = fields.Str()
   last_name = fields.Str()
+  setter = fields.Bool()
 
 # ==================================Other Schemas==================================
 
 class AuthUserSchema(Schema):
    username = fields.Str()
-   email = fields.Str()
    password = fields.Str(required=True, load_only = True)

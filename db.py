@@ -70,13 +70,22 @@ moonboard_boulders = {
     "moonboard_configuration": "MoonBoard 2016 (40° MoonBoard)"
     },
     '3':{
-    'boulder_name': 'reach',
-    'grade':'6C/V5',
-    'setter_id': '3',
-    'starting_hold': ['D3', 'A5'],
-    'usable_holds': ['D7','B10', 'F14', 'F15'],
-    'finish_hold': ['K18'],
-    'moonboard_configuration': 'MoonBoard 2016 (40° MoonBoard)'
+    "boulder_name": "reach",
+    "grade":"6C/V5",
+    "setter_id": "3",
+    "starting_hold": ["D3", "A5"],
+    "usable_holds": ["D7","B10", "F14", "F15"],
+    "finish_hold": ["K18"],
+    "moonboard_configuration": "MoonBoard 2016 (40° MoonBoard)"
+    },
+    '4':{
+    "boulder_name": "EAT BIG, GET BIG",
+    "grade":"7A/V6",
+    "setter_id": "2",
+    "starting_hold": ["K5"],
+    "usable_holds": ["G4","K8", "F10", "K11", "I14"],
+    "finish_hold": ["E18"],
+    "moonboard_configuration": "MoonBoard 2016 (40° MoonBoard)"
     }
 }
 
