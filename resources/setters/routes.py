@@ -53,7 +53,14 @@ class Setter(MethodView):
     # get a single setter
     @bp.response(200, UserSchemaNested)
     def get(self, setter_id):
-        return UserModel.query.get_or_404(setter_id, description='Setter not found')
+        setter = None
+        if setter_id.isdigit():
+            setter = UserModel.query.get(setter_id)
+        if not setter:
+            setter = UserModel.query.filter_by(username=setter_id).first()
+        if setter:
+            return setter
+        abort(400, message='Please enter valid username or id')
 
 
 
