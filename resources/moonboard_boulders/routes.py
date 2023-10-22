@@ -38,7 +38,6 @@ class MoonboardBoulderList(MethodView):
 class MoonboardBoulder(MethodView):
     # get a single boulder
     @jwt_required()
-    @bp.arguments(UpdateMoonBoardBoulderSchema)
     @bp.response(200, MoonBoardBoulderSchema)
     def get(self, moonboard_boulder_id):
         mb = MoonboardBoulderModel.query.get(moonboard_boulder_id)

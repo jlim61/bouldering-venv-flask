@@ -37,7 +37,6 @@ class GymBoulderList(MethodView):
 class GymBoulder(MethodView):
     # get a single boulder
     @jwt_required()
-    @bp.arguments(GymBoulderSchema)
     @bp.response(200, GymBoulderSchema)
     def get(self, gym_boulder_id):
         gb = GymBoulderModel.query.get(gym_boulder_id)
