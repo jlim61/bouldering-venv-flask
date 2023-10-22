@@ -7,7 +7,7 @@ from . import bp
 from .UserModel import UserModel
 
 # create user
-@bp.post('/register_user')
+@bp.post('/register')
 @bp.arguments(UserSetterSchema)
 @bp.response(201, UserSetterSchema)
 def register_user(user_data):
@@ -22,19 +22,19 @@ def register_user(user_data):
         abort(400, message='Username or Email already taken')
 
 # create setter
-@bp.post('/register_setter')
-@bp.arguments(UserSetterSchema)
-@bp.response(201, UserSetterSchema)
-def register_user(user_data):
-    if UserModel.query.filter_by(username=user_data['username']).first() or UserModel.query.filter_by(email=user_data['email']).first():
-        abort(400, message='Username or Email already taken')
-    user = UserModel()
-    user.from_dict(user_data)
-    try:
-        user.save()
-        return user_data
-    except IntegrityError:
-        abort(400, message='Username or Email already taken')
+# @bp.post('/register_setter')
+# @bp.arguments(UserSetterSchema)
+# @bp.response(201, UserSetterSchema)
+# def register_user(user_data):
+#     if UserModel.query.filter_by(username=user_data['username']).first() or UserModel.query.filter_by(email=user_data['email']).first():
+#         abort(400, message='Username or Email already taken')
+#     user = UserModel()
+#     user.from_dict(user_data)
+#     try:
+#         user.save()
+#         return user_data
+#     except IntegrityError:
+#         abort(400, message='Username or Email already taken')
 
 @bp.post('/login')
 @bp.arguments(AuthUserSchema)
