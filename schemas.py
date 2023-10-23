@@ -65,6 +65,9 @@ class UpdateUserSetterSchema(Schema):
   last_name = fields.Str()
   setter = fields.Bool()
 
+class MoonboardBoulderNestedSchema(MoonBoardBoulderSchema):
+    setters = fields.Nested(UserSetterSchema, dump_only=True)
+
 # ==================================Other Schemas==================================
 
 class AuthUserSchema(Schema):

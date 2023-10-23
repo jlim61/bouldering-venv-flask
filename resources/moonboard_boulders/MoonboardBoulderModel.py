@@ -13,6 +13,7 @@ class MoonboardBoulderModel(db.Model):
     usable_holds = db.Column(JSON, nullable=False)
     finish_hold = db.Column(JSON, nullable=False)
     moonboard_configuration = db.Column(db.String)
+    setters = db.relationship('UserModel', backref='boulder')
 
     def __repr__(self):
         return f'<Moonboard Boulder:\n{self.boulder_name}\n{self.grade}\n{self.setter_id}'
