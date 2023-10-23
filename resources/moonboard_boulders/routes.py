@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from resources.users.UserModel import UserModel
 
 from . MoonboardBoulderModel import MoonboardBoulderModel
-from schemas import MoonBoardBoulderSchema, UpdateMoonBoardBoulderSchema
+from schemas import MoonBoardBoulderSchema, MoonboardBoulderSchemaNested, UpdateMoonBoardBoulderSchema
 from . import bp
 
 
@@ -15,7 +15,7 @@ from . import bp
 class MoonboardBoulderList(MethodView):
     # get all boulders
     @jwt_required()
-    @bp.response(200, MoonBoardBoulderSchema(many=True))
+    @bp.response(200, MoonboardBoulderSchemaNested(many=True))
     def get(self):
         return MoonboardBoulderModel.query.all()
 
