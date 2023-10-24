@@ -44,7 +44,8 @@ def login(login_info):
     user = UserModel.query.filter_by(username=login_info['username']).first()
     if user and user.check_password(login_info['password']):
         access_token = create_access_token(identity=user.id)
-        return {'access_token': access_token}
+        return {'access_token': access_token,
+                'setter': user.setter}
     abort(400, message='Invalid Username or Password')
 
 # @bp.routes('/logout')
