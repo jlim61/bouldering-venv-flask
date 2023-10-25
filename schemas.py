@@ -64,7 +64,7 @@ class UserSchemaNested(UserSetterSchema):
     moonboard_boulders = fields.List(fields.Nested(MoonBoardBoulderSchema), dump_only=True)
     gym_boulders = fields.List(fields.Nested(GymBoulderSchema), dump_only=True)
     followed = fields.List(fields.Nested(UserSetterSchema), dump_only=True)
-    moonboard_info = fields.List(fields.Nested(ProjectedBoulderSchema), dump_only=True)
+    list_of_projects = fields.List(fields.Nested(ProjectedBoulderSchema), dump_only=True)
 
 class UpdateUserSetterSchema(Schema):
   username = fields.Str()
