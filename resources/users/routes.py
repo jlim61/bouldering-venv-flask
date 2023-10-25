@@ -3,6 +3,7 @@ from flask.views import MethodView
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_smorest import abort
 from sqlalchemy.exc import IntegrityError
+from resources.moonboard_boulders.MoonboardBoulderModel import MoonboardBoulderModel
 from resources.users.UserModel import UserModel
 
 from schemas import AuthUserSchema, UpdateUserSetterSchema, UserSchemaNested, UserSetterSchema
@@ -59,6 +60,20 @@ class User(MethodView):
         if not user:
             user = UserModel.query.filter_by(username=user_id).first()
         if user:
+            moonboards_info = []
+            for element in user.projected:
+                moonboard_info = {'attempts': element.attempts,
+                                'completed': element.completed,
+                                'boulder_id': element.boulder_id}
+                element = element.moonboard_boulders
+                boulder_info = {}
+                boulder_info['boulder_name'] = element.boulder_name
+                boulder_info['grade'] = element.grade
+                boulder_info['setter_id'] = element.setter_id
+                boulder_info['starting_hold'] = element.starting_hold
+                moonboard_info['boulder_info'] = boulder_info
+                moonboards_info.append(moonboard_info)
+                user.moonboard_info = moonboards_info
             return user
         abort(400, message='Please enter valid username or id')
 
@@ -88,3 +103,27 @@ class FollowUser(MethodView):
             user.unfollow_user(user_to_unfollow)
             return {'message': f'Unfollowed user: {user_to_unfollow.username}'}, 202
         abort(400, message="Invalid User Info")
+
+@bp.route('/user/project/<projected_id>')
+class ProjectBoulder(MethodView):
+    # Project a boulder
+    @jwt_required()
+    @bp.response(200, UserSetterSchema(many=True))
+    def post(self, projected_id):
+        projector_id = get_jwt_identity()
+        user = UserModel.query.get(projector_id)
+        boulder_to_project = MoonboardBoulderModel.query.get(projected_id)
+        if user and boulder_to_project:
+            user.add_project(boulder_to_project)
+            return user.projected
+        abort(400, message="Invalid Boulder Info")
+
+    @jwt_required()
+    def put(self, projected_id):
+        projector_id = get_jwt_identity()
+        user = UserModel.query.get(projector_id)
+        boulder_to_remove = MoonboardBoulderModel.query.get(projected_id)
+        if user and boulder_to_remove:
+            user.remove_project(boulder_to_remove)
+            return {'message': f'Boulder removed from projects: {boulder_to_remove.boulder_name}'}, 202
+        abort(400, message="Invalid Boulder Info")

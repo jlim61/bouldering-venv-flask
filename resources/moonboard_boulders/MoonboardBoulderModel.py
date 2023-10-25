@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy import JSON
+from ..users.UserModel import UserBoulderProjects
 
 class MoonboardBoulderModel(db.Model):
     
@@ -14,6 +15,9 @@ class MoonboardBoulderModel(db.Model):
     finish_hold = db.Column(JSON, nullable=False)
     moonboard_configuration = db.Column(db.String)
     setters = db.relationship('UserModel', backref='boulder')
+    projected_by = db.relationship('UserBoulderProjects',
+        backref=db.backref('projected_moonboard_boulders')
+    )
 
     def __repr__(self):
         return f'<Moonboard Boulder:\n{self.boulder_name}\n{self.grade}\n{self.setter_id}'

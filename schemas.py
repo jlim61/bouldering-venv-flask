@@ -33,6 +33,15 @@ class UpdateGymBoulderSchema(Schema):
     grade = fields.Str()
     setter_id = fields.Int(dump_only=True)
 
+# ==================================Projected Boulders Schemas==================================
+
+class ProjectedBoulderSchema(Schema):
+    boulder_id = fields.Int()
+    completed = fields.Bool()
+    attempts = fields.Int()
+    boulder_info = fields.Nested(MoonBoardBoulderSchema, dump_only=True)
+
+
 # ==================================All Boulders Schemas==================================
 
 class AllBoulderSchema(Schema):
@@ -55,6 +64,7 @@ class UserSchemaNested(UserSetterSchema):
     moonboard_boulders = fields.List(fields.Nested(MoonBoardBoulderSchema), dump_only=True)
     gym_boulders = fields.List(fields.Nested(GymBoulderSchema), dump_only=True)
     followed = fields.List(fields.Nested(UserSetterSchema), dump_only=True)
+    moonboard_info = fields.List(fields.Nested(ProjectedBoulderSchema), dump_only=True)
 
 class UpdateUserSetterSchema(Schema):
   username = fields.Str()

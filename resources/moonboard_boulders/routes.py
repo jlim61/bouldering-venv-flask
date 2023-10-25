@@ -4,8 +4,6 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask_smorest import abort
 from sqlalchemy.exc import IntegrityError
 
-from resources.users.UserModel import UserModel
-
 from . MoonboardBoulderModel import MoonboardBoulderModel
 from schemas import MoonBoardBoulderSchema, MoonboardBoulderNestedSchema, UpdateMoonBoardBoulderSchema
 from . import bp
