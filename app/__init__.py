@@ -8,6 +8,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 app.config.from_object(Config)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, compare_type=True)
