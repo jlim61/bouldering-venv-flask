@@ -38,6 +38,7 @@ class UpdateGymBoulderSchema(Schema):
 
 class ProjectedBoulderSchema(Schema):
     id = fields.Int()
+    user_id = fields.Int()
     boulder_id = fields.Int()
     completed = fields.Bool()
     attempts = fields.Int()

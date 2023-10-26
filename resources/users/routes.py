@@ -65,6 +65,7 @@ class User(MethodView):
                 moonboard_info = {'attempts': element.attempts,
                                 'completed': element.completed,
                                 'boulder_id': element.boulder_id,
+                                'user_id': element.user_id,
                                 'id': element.id}
                 element = element.moonboard_boulders
                 boulder_info = {}
