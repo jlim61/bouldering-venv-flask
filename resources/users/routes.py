@@ -24,7 +24,6 @@ class UserList(MethodView):
 
     # delete a user
     @jwt_required()
-    @bp.arguments(AuthUserSchema)
     def delete(self, user_data):
         user_id = get_jwt_identity()
         user = UserModel.query.get(user_id)
