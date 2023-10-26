@@ -123,12 +123,14 @@ class ProjectBoulder(MethodView):
     @jwt_required()
     def delete(self, projected_id):
         user_id = get_jwt_identity()
-        user = UserModel.query.get(user_id)
-        boulder_to_remove = UserBoulderProjects.query.get(projected_id)
-        if user and user.id == boulder_to_remove.user_id:
-            user.remove_project(boulder_to_remove)
-            return {'message': f'Boulder removed from projects: {boulder_to_remove}'}, 202
-        abort(400, message="Invalid Boulder Info")
+        project_to_remove = UserBoulderProjects.query.get(projected_id)
+        if project_to_remove:
+            if project_to_remove.user_id == user_id:
+                db.session.delete(project_to_remove)
+                db.session.commit()
+                return {'message': 'Boulder Deleted'}, 200
+            abort(400, message='Cannot delete other setter\'s boulder')
+        abort(400, message='Invalid Boulder ID')
 
 @bp.route('/project/attempts/<projected_id>/<amount>')
 class ProjectBoulderAttempts(MethodView):
