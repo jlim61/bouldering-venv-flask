@@ -64,7 +64,8 @@ class User(MethodView):
             for element in user.projected:
                 moonboard_info = {'attempts': element.attempts,
                                 'completed': element.completed,
-                                'boulder_id': element.boulder_id}
+                                'boulder_id': element.boulder_id,
+                                'id': element.id}
                 element = element.moonboard_boulders
                 boulder_info = {}
                 boulder_info['boulder_name'] = element.boulder_name
