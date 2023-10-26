@@ -121,7 +121,7 @@ class ProjectBoulder(MethodView):
 
     # stop projecting a boulder
     @jwt_required()
-    def put(self, projected_id):
+    def delete(self, projected_id):
         user_id = get_jwt_identity()
         user = UserModel.query.get(user_id)
         boulder_to_remove = UserBoulderProjects.query.get(projected_id)
