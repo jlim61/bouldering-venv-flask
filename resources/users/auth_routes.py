@@ -45,7 +45,8 @@ def login(login_info):
     if user and user.check_password(login_info['password']):
         access_token = create_access_token(identity=user.id)
         return {'access_token': access_token,
-                'setter': user.setter}
+                'setter': user.setter,
+                'id': user.id}
     abort(400, message='Invalid Username or Password')
 
 # @bp.routes('/logout')
