@@ -128,8 +128,8 @@ class ProjectBoulder(MethodView):
             if project_to_remove.user_id == user_id:
                 db.session.delete(project_to_remove)
                 db.session.commit()
-                return {'message': 'Boulder Deleted'}, 200
-            abort(400, message='Cannot delete other setter\'s boulder')
+                return {'message': 'Project Removed'}, 200
+            abort(400, message='Cannot remove other user\'s project')
         abort(400, message='Invalid Boulder ID')
 
 @bp.route('/project/attempts/<projected_id>/<amount>')
