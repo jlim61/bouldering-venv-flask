@@ -69,8 +69,8 @@ class User(MethodView):
                 boulder_info = {}
                 boulder_info['boulder_name'] = element.boulder_name
                 boulder_info['grade'] = element.grade
+                boulder_info['id'] = element.id
                 boulder_info['setter_id'] = element.setter_id
-                boulder_info['starting_hold'] = element.starting_hold
                 moonboard_info['boulder_info'] = boulder_info
                 moonboards_info.append(moonboard_info)
                 user.moonboard_info = moonboards_info
@@ -127,3 +127,4 @@ class ProjectBoulder(MethodView):
             user.remove_project(boulder_to_remove)
             return {'message': f'Boulder removed from projects: {boulder_to_remove.boulder_name}'}, 202
         abort(400, message="Invalid Boulder Info")
+
