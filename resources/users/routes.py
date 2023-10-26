@@ -22,16 +22,6 @@ class UserList(MethodView):
     def get(self):
         return UserModel.query.all()
 
-    # delete a user
-    @jwt_required()
-    def delete(self, user_data):
-        user_id = get_jwt_identity()
-        user = UserModel.query.get(user_id)
-        if user and user.username == user_data['username'] and user.check_password(user_data['password']):
-            user.delete()
-            return {'message':f'{user_data["username"]} deleted'}, 202
-        abort(400, message='Username or Password Invalid')
-
     # Edit a user
     @jwt_required()
     @bp.arguments(UpdateUserSetterSchema)
@@ -77,6 +67,17 @@ class User(MethodView):
                 user.moonboard_info = moonboards_info
             return user
         abort(400, message='Please enter valid username or id')
+
+    # delete a user
+    @jwt_required()
+    def delete(self, user_id):
+        logged_id = get_jwt_identity()
+        user = UserModel.query.get(user_id)
+        if user:
+            if user.id == logged_id:
+                user.delete()
+                return {'message':f'{user.username} deleted'}, 202
+        abort(400, message='Username or Password Invalid')
 
 
 
