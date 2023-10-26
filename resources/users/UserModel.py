@@ -101,6 +101,6 @@ class UserModel(db.Model):
 
     def remove_project(self,boulder):
         if self.is_projecting(boulder):
-            boulder_to_remove = UserBoulderProjects(user_id = self.id, boulder_id = boulder.id)
+            boulder_to_remove = UserBoulderProjects.query.get(boulder.id)
             db.session.delete(boulder_to_remove)
             db.session.commit()

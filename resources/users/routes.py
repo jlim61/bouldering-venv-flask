@@ -6,10 +6,10 @@ from sqlalchemy.exc import IntegrityError
 from resources.moonboard_boulders.MoonboardBoulderModel import MoonboardBoulderModel
 from resources.users.UserModel import UserModel
 
-from schemas import AuthUserSchema, UpdateUserSetterSchema, UserSchemaNested, UserSetterSchema
+from schemas import AuthUserSchema, ProjectedBoulderSchema, UpdateUserSetterSchema, UserSchemaNested, UserSetterSchema
 
 from . import bp
-from .UserModel import UserModel
+from .UserModel import UserBoulderProjects, UserModel
 from app import db
 from db import users
 
@@ -118,13 +118,46 @@ class ProjectBoulder(MethodView):
             return user.projected
         abort(400, message="Invalid Boulder Info")
 
+    # stop projecting a boulder
     @jwt_required()
     def put(self, projected_id):
-        projector_id = get_jwt_identity()
-        user = UserModel.query.get(projector_id)
-        boulder_to_remove = MoonboardBoulderModel.query.get(projected_id)
-        if user and boulder_to_remove:
+        user_id = get_jwt_identity()
+        user = UserModel.query.get(user_id)
+        boulder_to_remove = UserBoulderProjects.query.get(projected_id)
+        if user and user.id == boulder_to_remove.user_id:
             user.remove_project(boulder_to_remove)
-            return {'message': f'Boulder removed from projects: {boulder_to_remove.boulder_name}'}, 202
+            return {'message': f'Boulder removed from projects: {boulder_to_remove}'}, 202
         abort(400, message="Invalid Boulder Info")
 
+@bp.route('/project/attempts/<projected_id>/<amount>')
+class ProjectBoulderAttempts(MethodView):
+    # adjust amount
+    @jwt_required()
+    @bp.response(200, ProjectedBoulderSchema)
+    def put(self, projected_id, amount):
+        user_id = get_jwt_identity()
+        user = UserModel.query.get(user_id)
+        boulder_to_update = UserBoulderProjects.query.get(projected_id)
+        if user and user.id == boulder_to_update.user_id:
+            boulder_to_update.attempts = amount
+            db.session.commit()
+            return boulder_to_update
+        else:
+            abort(400, message="Invalid Boulder Info")
+
+@bp.route('/project/completed/<projected_id>/<status>')
+class ProjectBoulderCompleted(MethodView):
+    # adjust completion status
+    @jwt_required()
+    @bp.response(200, ProjectedBoulderSchema)
+    def put(self, projected_id, status):
+        user_id = get_jwt_identity()
+        user = UserModel.query.get(user_id)
+        boulder_to_update = UserBoulderProjects.query.get(projected_id)
+        if user and user.id == boulder_to_update.user_id:
+            if status.lower() == 'true':
+                boulder_to_update.completed = True
+                db.session.commit()
+            return boulder_to_update
+        else:
+            abort(400, message="Invalid Boulder Info")
