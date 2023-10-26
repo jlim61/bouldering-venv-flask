@@ -4,6 +4,7 @@ from marshmallow import Schema, fields
 # ==================================Moonboard Boulders Schemas==================================
 
 class MoonBoardBoulderSchema(Schema):
+    id = fields.Int(dump_only=True)
     boulder_name = fields.Str(required=True)
     grade = fields.Str(required=True)
     setter_id = fields.Int(dump_only=True)
