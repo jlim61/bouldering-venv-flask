@@ -1,3 +1,4 @@
+from datetime import timedelta
 from flask import Flask
 from flask_smorest import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -9,6 +10,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(minutes=20)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, compare_type=True)
